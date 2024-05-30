@@ -1,6 +1,6 @@
 #include "AntiDBG.h"
 #include <iostream>
-#define SHOW_DEBUG_MESSAGES
+// #define SHOW_DEBUG_MESSAGES
 
 // =======================================================================
 // Debugging helper
@@ -12,6 +12,8 @@ void DBG_MSG(WORD dbg_code, const char* message)
     MessageBoxA(NULL, message, "GAME OVER!", 0);
 #endif
 }
+
+#define DETECT_DEBUGGER(x) RaiseException(x, 0, 0, NULL)
 
 // =======================================================================
 // Memory Checks
@@ -49,7 +51,7 @@ void adbg_BeingDebuggedPEB(void)
     if (found)
     {
         DBG_MSG(DBG_BEINGEBUGGEDPEB, "Caught by BeingDebugged PEB check!");
-        exit(DBG_BEINGEBUGGEDPEB);
+        DETECT_DEBUGGER(DBG_BEINGEBUGGEDPEB);
     }
 }
 
@@ -65,7 +67,7 @@ void adbg_CheckRemoteDebuggerPresent(void)
     if (found)
     {
         DBG_MSG(DBG_CHECKREMOTEDEBUGGERPRESENT, "Caught by CheckRemoteDebuggerPresent!");
-        exit(DBG_CHECKREMOTEDEBUGGERPRESENT);
+        DETECT_DEBUGGER(DBG_CHECKREMOTEDEBUGGERPRESENT);
     }
 }
 
@@ -93,7 +95,7 @@ void adbg_CheckWindowName(void)
     if (found)
     {
         DBG_MSG(DBG_FINDWINDOW, "Caught by FindWindow (WindowName)!");
-        exit(DBG_FINDWINDOW);
+        DETECT_DEBUGGER(DBG_FINDWINDOW);
     }
 }
 
@@ -126,7 +128,7 @@ void adbg_ProcessFileName(void)
                 processName = processInformation.szExeFile;
                 if (_wcsicmp(debugger, processName) == 0) {
                     DBG_MSG(DBG_PROCESSFILENAME, "Caught by ProcessFileName!");
-                    exit(DBG_PROCESSFILENAME);
+                    DETECT_DEBUGGER(DBG_PROCESSFILENAME);
                 }
             }
         } while (Process32NextW(processList, &processInformation));
@@ -158,7 +160,7 @@ void adbg_CheckWindowClassName(void)
     if (found)
     {
         DBG_MSG(DBG_FINDWINDOW, "Caught by FindWindow (ClassName)!");
-        exit(DBG_FINDWINDOW);
+        DETECT_DEBUGGER(DBG_FINDWINDOW);
     }
 }
 
@@ -170,7 +172,7 @@ void adbg_IsDebuggerPresent(void)
     if (found)
     {
         DBG_MSG(DBG_ISDEBUGGERPRESENT, "Caught by IsDebuggerPresent!");
-        exit(DBG_ISDEBUGGERPRESENT);
+        DETECT_DEBUGGER(DBG_ISDEBUGGERPRESENT);
     }
 }
 
@@ -205,7 +207,7 @@ void adbg_NtGlobalFlagPEB(void)
     if (found)
     {
         DBG_MSG(DBG_NTGLOBALFLAGPEB, "Caught by NtGlobalFlag PEB check!");
-        exit(DBG_NTGLOBALFLAGPEB);
+        DETECT_DEBUGGER(DBG_NTGLOBALFLAGPEB);
     }
 }
 
@@ -256,7 +258,7 @@ void adbg_NtQueryInformationProcess(void)
             if (pPeb->BeingDebugged)
             {
                 DBG_MSG(DBG_NTQUERYINFORMATIONPROCESS, "Caught by NtQueryInformationProcess (ProcessDebugPort)!");
-                exit(DBG_NTQUERYINFORMATIONPROCESS);
+                DETECT_DEBUGGER(DBG_NTQUERYINFORMATIONPROCESS);
             }
         }
     }
@@ -309,7 +311,7 @@ void adbg_DebugActiveProcess(const char* cpid)
         else
         {
             // Debugger found, exit child with a unique code we can check for.
-            exit(555);
+            DETECT_DEBUGGER(555);
         }
     }
 
@@ -350,7 +352,7 @@ void adbg_DebugActiveProcess(const char* cpid)
     if (found)
     {
         DBG_MSG(DBG_DEBUGACTIVEPROCESS, "Caught by DebugActiveProcess!");
-        exit(DBG_DEBUGACTIVEPROCESS);
+        DETECT_DEBUGGER(DBG_DEBUGACTIVEPROCESS);
     }
 }
 
@@ -436,7 +438,7 @@ void adbg_RDTSC(void)
     if (found)
     {
         DBG_MSG(DBG_RDTSC, "Caught by RDTSC!");
-        exit(DBG_RDTSC);
+        DETECT_DEBUGGER(DBG_RDTSC);
     }
 }
 
@@ -476,7 +478,7 @@ void adbg_QueryPerformanceCounter(void)
     if (found)
     {
         DBG_MSG(DBG_QUERYPERFORMANCECOUNTER, "Caught by QueryPerformanceCounter!");
-        exit(DBG_QUERYPERFORMANCECOUNTER);
+        DETECT_DEBUGGER(DBG_QUERYPERFORMANCECOUNTER);
     }
 }
 
@@ -516,7 +518,7 @@ void adbg_GetTickCount(void)
     if (found)
     {
         DBG_MSG(DBG_GETTICKCOUNT, "Caught by GetTickCount!");
-        exit(DBG_GETTICKCOUNT);
+        DETECT_DEBUGGER(DBG_GETTICKCOUNT);
     }
 }
 
@@ -545,7 +547,7 @@ void adbg_HardwareDebugRegisters(void)
     if (found)
     {
         DBG_MSG(DBG_HARDWAREDEBUGREGISTERS, "Caught by a Hardware Debug Register Check!");
-        exit(DBG_HARDWAREDEBUGREGISTERS);
+        DETECT_DEBUGGER(DBG_HARDWAREDEBUGREGISTERS);
     }
 }
 
@@ -575,7 +577,7 @@ void adbg_MovSS(void)
     if (found)
     {
         DBG_MSG(DBG_MOVSS, "Caught by a MOV SS Single Step Check!");
-        exit(DBG_MOVSS);
+        DETECT_DEBUGGER(DBG_MOVSS);
     }
 }
 
@@ -605,7 +607,7 @@ void adbg_CloseHandleException(void)
     if (found)
     {
         DBG_MSG(DBG_CLOSEHANDLEEXCEPTION, "Caught by an CloseHandle exception!");
-        exit(DBG_CLOSEHANDLEEXCEPTION);
+        DETECT_DEBUGGER(DBG_CLOSEHANDLEEXCEPTION);
     }
 }
 
@@ -641,7 +643,7 @@ void adbg_SingleStepException(void)
     if (found)
     {
         DBG_MSG(DBG_SINGLESTEPEXCEPTION, "Caught by a Single Step Exception!");
-        exit(DBG_SINGLESTEPEXCEPTION);
+        DETECT_DEBUGGER(DBG_SINGLESTEPEXCEPTION);
     }
 }
 
@@ -670,7 +672,7 @@ void adbg_Int3(void)
     if (found)
     {
         DBG_MSG(DBG_INT3CC, "Caught by a rogue INT 3!");
-        exit(DBG_INT3CC);
+        DETECT_DEBUGGER(DBG_INT3CC);
     }
 }
 
@@ -702,7 +704,7 @@ void adbg_PrefixHop(void)
     if (found)
     {
         DBG_MSG(DBG_PREFIXHOP, "Caught by a Prefix Hop!");
-        exit(DBG_PREFIXHOP);
+        DETECT_DEBUGGER(DBG_PREFIXHOP);
     }
 }
 
@@ -732,7 +734,7 @@ void adbg_Int2D(void)
     if (found)
     {
         DBG_MSG(DBG_NONE, "Caught by a rogue INT 2D!");
-        exit(DBG_NONE);
+        DETECT_DEBUGGER(DBG_NONE);
     }
 }
 
